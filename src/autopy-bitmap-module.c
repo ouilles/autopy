@@ -3,6 +3,7 @@
 #include "screen.h"
 #include "screengrab.h"
 #include "py-convenience.h"
+#include <numpy/arrayobject.h>
 
 /* Syntax: capture_screen(rect=None) => Bitmap object */
 /* Arguments: |rect| => ((|x|, |y|), (|width|, |height|)) rect of ints */
@@ -26,6 +27,7 @@ PyMODINIT_FUNC initbitmap(void)
 	                               "autopy module for working with bitmaps");
 	if (mod == NULL) return; /* Error */
 
+        import_array();
 	/* Instantiate new "Bitmap" class so that it is available in the module. */
 	if (Py_AddClassToModule(mod, &Bitmap_Type) < 0) {
 		return; /* Error */

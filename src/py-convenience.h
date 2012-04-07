@@ -4,6 +4,8 @@
 
 #include <Python.h>
 
+#define PY_ARRAY_UNIQUE_SYMBOL np
+
 /* Checks class is ready and adds it to module.
  * 0 is returned on success, -1 on failure. */
 int Py_AddClassToModule(PyObject *mod, PyTypeObject *classType);
