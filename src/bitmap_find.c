@@ -60,8 +60,8 @@ static int findBitmapInRectAt(MMBitmapRef needle,
                                 MMPoint startPoint,
                                 UTHashTable *badShiftTable)
 {
-	const size_t scanHeight = rect.size.height - needle->height;
-	const size_t scanWidth = rect.size.width - needle->width;
+	const size_t scanHeight = rect.origin.y + rect.size.height - needle->height;
+	const size_t scanWidth = rect.origin.x + rect.size.width - needle->width;
 	MMPoint pointOffset = startPoint;
 	/* const MMPoint lastPoint = MMPointMake(needle->width - 1, needle->height - 1); */
 
