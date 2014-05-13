@@ -1,0 +1,27 @@
+To build dependency
+
+Need to have MSYS installed on your system.
+
+---Zlib---
+
+Download zip source code from:
+http://zlib.net/zlib128.zip
+
+unzip in autopy/windows/win32/mingw32
+rename directory in zlib
+Open Msys windows
+
+make libz.a -f win32/Makefile.gcc
+cp(copy) libz.a to autopy/windows/win32/mingw32
+
+---Png---
+
+Download source code from:
+http://sourceforge.net/projects/libpng/files/libpng16/1.6.10/lpng1610.zip/download
+
+Unzip in autopy/windows/win32/mingw32
+
+Open Msys windows
+
+make static clean -f scripts/makefile.gcc
+cp(copy) libpng.a in win32/mingw32

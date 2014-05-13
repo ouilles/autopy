@@ -2,3 +2,5 @@ build
 dist
 *.pyc
 .DS_Store
+lpng1610
+zlib

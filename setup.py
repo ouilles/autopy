@@ -14,6 +14,7 @@ if system == 'Darwin':
     USE_MAC = True
 elif system == 'Windows' or system == 'Microsoft':
     USE_WINDOWS = True
+    USE_MINGW = 'mingw32' in sys.argv
 else: # Default to X11
     USE_X11 = True
 
@@ -150,10 +151,11 @@ def create_ext_modules(src_dir):
         def add_lib(module_dict, lib):
             """Adds both standard and MSVC flag to link to library."""
             modules[module].setdefault('libraries', []).append(lib)
-
-            # The "libraries" option doesn't appear to cater to MSVC, so we
-            # have to add this flag separately:
-            modules[module].setdefault('lflags', []).append(lib + '.lib')
+            
+            if not USE_MINGW:
+                # The "libraries" option doesn't appear to cater to MSVC, so we
+                # have to add this flag separately:
+                modules[module].setdefault('lflags', []).append(lib + '.lib')
 
         for module in 'mouse', 'key', 'screen', 'bitmap', 'alert':
             add_lib(modules[module], 'user32')
