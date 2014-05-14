@@ -8,6 +8,7 @@
 #include "py-convenience.h"
 #include <assert.h>
 #include <stdio.h>
+#include <numpy/arrayobject.h>
 
 /* -- Bitmap class definition -- */
 
@@ -76,6 +77,10 @@ static PyObject *Bitmap_save(BitmapObject *self, PyObject *args);
                 used with `Bitmap.from_string()`. */
 /* Raises: |IOError| if the string could not be created. */
 static PyObject *Bitmap_to_string(BitmapObject *self, PyObject *args);
+
+/* Syntax: bmp.to_numpy() => np.array */
+/* Description: Returns a numpy array fo the image data, suitable for OpenCV */
+static PyObject *Bitmap_to_numpy(BitmapObject *self, PyObject *args);
 
 /* Syntax: bmp.get_color(x, y) => hexadecimal integer */
 /* Arguments: |x| => integer,
@@ -201,6 +206,9 @@ static PyMethodDef Bitmap_methods[] = {
 	{"to_string", (PyCFunction)Bitmap_to_string, METH_NOARGS,
 	 "bmp.to_string() -> string\n"
 	 "Returns compressed, printable string representing bitmap."},
+        {"to_numpy", (PyCFunction)Bitmap_to_numpy, METH_NOARGS,
+         "bmp.to_numpy() -> np.array\n"
+         "Returns an numpy array of the image data, suitable for OpenCV."},
 	{"find_color", (PyCFunction)Bitmap_find_color, METH_VARARGS,
 	 "bmp.find_color((r, g, b), tolerance=0.0, rect=None) -> tuple (x, y) or "
 	                                                         "None\n"
@@ -498,6 +506,28 @@ static PyObject *Bitmap_to_string(BitmapObject *self, PyObject *args)
 		return NULL;
 	}
 	return PyString_FromString(buf);
+}
+
+static PyObject *Bitmap_to_numpy(BitmapObject *self, PyObject *args)
+{
+        if (!Bitmap_Ready(self)) return NULL;
+        npy_intp dims[3];
+        dims[0] = self->bitmap->height;
+        dims[1] = self->bitmap->width;
+        dims[2] = 3;
+
+        PyArrayObject *array = (PyArrayObject *) PyArray_SimpleNew(3, dims, PyArray_UINT8);
+        npy_intp y;
+        npy_intp x;
+        for (y=0; y<self->bitmap->height; y++) {
+            for (x=0; x<self->bitmap->width; x++) {
+                MMRGBColor *srcColor = MMRGBColorRefAtPoint(self->bitmap, x, y);
+                *((uint8_t *) PyArray_GETPTR3(array, y, x, 0)) = srcColor->blue;
+                *((uint8_t *) PyArray_GETPTR3(array, y, x, 1)) = srcColor->green;
+                *((uint8_t *) PyArray_GETPTR3(array, y, x, 2)) = srcColor->red;
+            }
+        }
+        return PyArray_Return(array);
 }
 
 static PyObject *Bitmap_get_color(BitmapObject *self, PyObject *args)

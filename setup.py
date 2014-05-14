@@ -3,6 +3,7 @@ import os
 import platform
 import sys
 import textwrap
+import numpy as np
 
 from distutils.core import setup, Extension
 from commands import getoutput
@@ -248,4 +249,5 @@ setup(name=PACKAGE_NAME,
       platforms=('Mac OS X 10.5+', 'X11 with XTest Extension', 'Windows'),
       packages=[PACKAGE_NAME],
       ext_package=PACKAGE_NAME,
-      ext_modules=EXT_MODULES)
+      ext_modules=EXT_MODULES,
+      include_dirs=[np.get_include()])
