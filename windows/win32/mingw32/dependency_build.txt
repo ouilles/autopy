@@ -13,6 +13,9 @@ Open Msys windows
 
 make libz.a -f win32/Makefile.gcc
 cp(copy) libz.a to autopy/windows/win32/mingw32
+copy zlib.h to autopy/windows/win32/mingw32
+copy zconf.h to autopy/windows/win32/mingw32
+
 
 ---Png---
 
@@ -25,3 +28,6 @@ Open Msys windows
 
 make static clean -f scripts/makefile.gcc
 cp(copy) libpng.a in win32/mingw32
+cp png.h to win/mingw32
+cp pngconf.h to win/mingw32
+cp pnglibconf.h to win/mingw32

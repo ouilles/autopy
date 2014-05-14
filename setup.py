@@ -150,23 +150,32 @@ def create_ext_modules(src_dir):
     elif USE_WINDOWS:
         def add_lib(module_dict, lib):
             """Adds both standard and MSVC flag to link to library."""
-            modules[module].setdefault('libraries', []).append(lib)
-            
+            module_dict.setdefault('libraries', []).append(lib)
+
             if not USE_MINGW:
                 # The "libraries" option doesn't appear to cater to MSVC, so we
                 # have to add this flag separately:
-                modules[module].setdefault('lflags', []).append(lib + '.lib')
+                module_dict.setdefault('lflags', []).append(lib + '.lib')
 
         for module in 'mouse', 'key', 'screen', 'bitmap', 'alert':
             add_lib(modules[module], 'user32')
         for module in 'screen', 'bitmap':
             add_lib(modules[module], 'Gdi32')
 
-        # MSVC doesn't use same lib names as everybody else.
-        for wrong_lib in 'png', 'z':
-            modules['bitmap']['libraries'].remove(wrong_lib)
-        for right_lib in 'libpng', 'zlib':
-            add_lib(modules['bitmap'], right_lib)
+        if not USE_MINGW:
+            # MSVC doesn't use same lib names as everybody else.
+            for wrong_lib in 'png', 'z':
+                modules['bitmap']['libraries'].remove(wrong_lib)
+            for right_lib in 'libpng', 'zlib':
+                add_lib(modules['bitmap'], right_lib)
+
+        # Big problem with mingw32 compiler
+        # distutils automaticaly link with msvcr90 which cannot load if a manifest is not includer
+        # This is a quick hack. Linking against msvcrt to avoid use
+        # Of msvcr90
+
+        if USE_MINGW:
+            add_lib(modules['bitmap'],'msvcrt')
 
         # We store Windows libraries and headers in our own custom folder.
         win_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -176,7 +185,7 @@ def create_ext_modules(src_dir):
         # Libraries are statically compiled for their architecture.
         win_dir = os.path.join(win_dir,
                                'win64' if platform.architecture()[0] == '64bit'
-                                       else 'win32')
+                                       else 'win32' if not USE_MINGW else 'win32\mingw32')
 
         if not os.path.isdir(win_dir):
             raise IOError('windows directory not found at: "%s"' % win_dir)
@@ -213,6 +222,7 @@ def create_ext_modules(src_dir):
                                      language='c',
                                      extra_compile_args=cflags,
                                      extra_link_args=extra_link_args))
+
     return ext_modules
 
 PACKAGE_NAME = 'autopy'
