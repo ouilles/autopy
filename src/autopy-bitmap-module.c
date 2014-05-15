@@ -24,7 +24,7 @@ static PyMethodDef BitmapMethods[] = {
 PyMODINIT_FUNC initbitmap(void)
 {
 	PyObject *mod = Py_InitModule3("bitmap", BitmapMethods,
-	                               "autopy module for working with bitmaps");
+	                               "autopy module for working with bitmaps Vr2");
 	if (mod == NULL) return; /* Error */
 
         import_array();

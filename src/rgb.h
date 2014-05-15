@@ -95,12 +95,15 @@ H_INLINE int MMRGBHexSimilarToColor(MMRGBHex h1, MMRGBHex h2, float tolerance)
 	if (tolerance <= 0.0f) {
 		return h1 == h2;
 	} else {
-		uint8_t d1 = RED_FROM_HEX(h1) - RED_FROM_HEX(h2);
-		uint8_t d2 = GREEN_FROM_HEX(h1) - GREEN_FROM_HEX(h2);
-		uint8_t d3 = BLUE_FROM_HEX(h1) - BLUE_FROM_HEX(h2);
-		return sqrt((d1 * d1) +
+		int16_t d1 = RED_FROM_HEX(h1) - RED_FROM_HEX(h2);
+		int16_t d2 = GREEN_FROM_HEX(h1) - GREEN_FROM_HEX(h2);
+		int16_t d3 = BLUE_FROM_HEX(h1) - BLUE_FROM_HEX(h2);
+		/*return sqrt((d1 * d1) +
 		            (d2 * d2) +
-		            (d3 * d3)) <= (tolerance * 442.0f);
+		            (d3 * d3)) <= (tolerance * 442.0f);*/
+		return ((abs(d1)<=tolerance) &&
+		            (abs(d2)<=tolerance) &&
+		            (abs(d3)<=tolerance));
 	}
 }
 
